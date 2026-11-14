@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page not found — RideShare</title>
+    <meta name="description" content="The page you were looking for doesn't exist." />
+    <meta name="robots" content="noindex" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script>
+      try {
+        const theme = localStorage.getItem('rideshare:theme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+      } catch {
+        /* use the system theme */
+      }
+    </script>
+    <script type="module" src="/src/not-found.js"></script>
+  </head>
+  <body>
+    <main class="container">
+      <section class="not-found" aria-labelledby="nfTitle">
+        <p class="not-found-code" aria-hidden="true">404</p>
+        <h1 id="nfTitle">This ride doesn't exist</h1>
+        <p>
+          The page you're looking for has moved or never existed. Head back to see available pools.
+        </p>
+        <a class="btn btn-primary" href="/">Back to RideShare</a>
+      </section>
+    </main>
+  </body>
+</html>

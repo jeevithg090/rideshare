@@ -1,508 +1,397 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carpool Pooling System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        /* Base Styles */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f8ff;
-            margin: 0;
-            padding: 20px;
-            color: #2c3e50;
-        }
-
-        .main-container {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Counter Section */
-        .counter-section {
-            background: white;
-            padding: 40px 20px;
-            border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .counter-header {
-            font-size: 1.5em;
-            margin-bottom: 30px;
-            color: #34495e;
-        }
-
-        .counter-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .counter-btn {
-            width: 50px;
-            height: 50px;
-            border: none;
-            border-radius: 15px;
-            background: #4fc3f7;
-            color: white;
-            font-size: 1.5em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .counter-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 15px rgba(79, 195, 247, 0.4);
-        }
-
-        .counter-value {
-            font-size: 2.5em;
-            min-width: 60px;
-            text-align: center;
-            color: #2c3e50;
-        }
-
-        .go-btn {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 12px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-
-        /* Form Section */
-        .form-section {
-            display: none;
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .input-group {
-            margin-bottom: 25px;
-            position: relative;
-        }
-
-        .gps-btn {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #4fc3f7;
-            cursor: pointer;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 15px 45px 15px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 1em;
-            transition: border-color 0.3s ease;
-        }
-
-        .time-input {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .time-input input {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-        }
-
-        /* Pool Dashboard */
-        .pool-dashboard {
-            display: none;
-            margin-top: 30px;
-        }
-
-        .pool-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .pool-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .pool-price {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
-        .pool-details {
-            color: #7f8c8d;
-            margin-bottom: 15px;
-        }
-
-        .join-btn {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        #createdPool,
-        #yourRides,
-        #joinForm,
-        #passengerDetails,
-        #overlay {
-            display: none;
-        }
-
-        #joinForm {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-        }
-
-        #joinForm .form-input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        #joinForm .go-btn {
-            width: 100%;
-            padding: 10px;
-        }
-
-        #passengerDetails {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            z-index: 1001;
-            width: 80%;
-            max-width: 400px;
-        }
-
-        #passengerList {
-            margin-bottom: 15px;
-        }
-
-        #passengerList div {
-            padding: 8px;
-            border-bottom: 1px solid #eee;
-        }
-
-        #passengerList div:last-child {
-            border-bottom: none;
-        }
-
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="main-container">
-        <!-- Counter Section -->
-        <div class="counter-section">
-            <h2 class="counter-header">Number of Pool Riders</h2>
-            <div class="counter-wrapper">
-                <button class="counter-btn" id="decrementBtn">-</button>
-                <div class="counter-value" id="riderCount">1</div>
-                <button class="counter-btn" id="incrementBtn">+</button>
-            </div>
-            <button class="go-btn" id="goBtn">Continue →</button>
-        </div>
-
-        <!-- Form Section -->
-        <div class="form-section" id="formSection">
-            <div class="input-group">
-                <input type="text" class="form-input" id="pickup" placeholder="Pickup location" required>
-                <button class="gps-btn" onclick="getCurrentLocation()">
-                    <i class="fas fa-crosshairs"></i>
-                </button>
-            </div>
-
-            <div class="input-group">
-                <input type="text" class="form-input" id="drop" placeholder="Drop location" required>
-            </div>
-
-            <div class="input-group">
-                <input type="number" class="form-input" id="cost" placeholder="Cost per rider (₹)" required step="10">
-            </div>
-
-            <div class="time-input">
-                <input type="time" class="form-input" id="pickupTime" required>
-            </div>
-
-            <button class="go-btn" onclick="createPool()">Find Pool</button>
-        </div>
-
-        <!-- Pool Dashboard -->
-        <div class="pool-dashboard" id="poolDashboard">
-            <div class="pool-card" id="createdPool">
-                <div class="pool-header">
-                    <h3>Available Pool</h3>
-                    <div class="pool-price" id="displayCost">₹150/person</div>
-                </div>
-                <div class="pool-details">
-                    <div id="displayRoute">🏢 Office Complex → 🏡 Residential Area</div>
-                    <div id="displayTime">🕘 08:30 AM | 👥 2/4 riders</div>
-                </div>
-                <button class="join-btn" onclick="showJoinForm()">Join Pool</button>
-            </div>
-        </div>
-
-        <!-- Your Rides Section -->
-        <div class="pool-dashboard" id="yourRides">
-            <h2>Your Rides</h2>
-            <div class="pool-card" id="joinedPool">
-                <div class="pool-header">
-                    <h3>Joined Pool</h3>
-                    <div class="pool-price" id="joinedDisplayCost">₹150/person</div>
-                </div>
-                <div class="pool-details">
-                    <div id="joinedDisplayRoute">🏢 Office Complex → 🏡 Residential Area</div>
-                    <div id="joinedDisplayTime">🕘 08:30 AM | 👥 2/4 riders</div>
-                </div>
-                <button class="go-btn" onclick="showPassengerDetails()">Show Details</button>
-            </div>
-        </div>
-
-        <!-- Join Form Popup -->
-        <div id="joinForm">
-            <h2>Join Pool</h2>
-            <input type="text" id="name" class="form-input" placeholder="Your Name" required>
-            <input type="tel" id="phone" class="form-input" placeholder="Phone Number" required>
-            <button class="go-btn" onclick="joinPool()">Join</button>
-        </div>
-
-        <!-- Passenger Details Popup -->
-        <div id="passengerDetails">
-            <h2>Passenger Details</h2>
-            <div id="passengerList">
-                <!-- Passenger details will be added here dynamically -->
-            </div>
-            <button class="go-btn" onclick="hidePassengerDetails()">Close</button>
-        </div>
-
-        <!-- Overlay -->
-        <div id="overlay"></div>
-    </div>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RideShare — Carpool &amp; split the fare</title>
+    <meta
+      name="description"
+      content="Offer a seat on your trip or join someone else's carpool. RideShare splits the fare equally across everyone riding."
+    />
+    <meta name="theme-color" content="#f4f7fb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="RideShare — Carpool &amp; split the fare" />
+    <meta
+      property="og:description"
+      content="Offer a seat on your trip or join someone else's carpool. The fare is split equally across everyone riding."
+    />
+    <meta property="og:image" content="/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
     <script>
-        // Counter Logic
-        let riderCount = 1;
-        const counter = document.getElementById('riderCount');
-        const incrementBtn = document.getElementById('incrementBtn');
-        const decrementBtn = document.getElementById('decrementBtn');
-        const goBtn = document.getElementById('goBtn');
-        const formSection = document.getElementById('formSection');
-        const poolDashboard = document.getElementById('poolDashboard');
-        const createdPool = document.getElementById('createdPool');
-        const yourRides = document.getElementById('yourRides');
-        const joinedPool = document.getElementById('joinedPool');
-        const joinForm = document.getElementById('joinForm');
-        const overlay = document.getElementById('overlay');
-        const passengerDetails = document.getElementById('passengerDetails');
-        const passengerList = document.getElementById('passengerList');
-
-        incrementBtn.addEventListener('click', () => {
-            riderCount = Math.min(riderCount + 1, 4);
-            counter.textContent = riderCount;
-        });
-
-        decrementBtn.addEventListener('click', () => {
-            riderCount = Math.max(riderCount - 1, 1);
-            counter.textContent = riderCount;
-        });
-
-        goBtn.addEventListener('click', () => {
-            document.querySelector('.counter-section').style.display = 'none';
-            formSection.style.display = 'block';
-        });
-
-        // GPS Integration
-        function getCurrentLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    const geocoder = new google.maps.Geocoder();
-                    const latlng = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    };
-
-                    geocoder.geocode({
-                        location: latlng
-                    }, (results, status) => {
-                        if (status === "OK" && results[0]) {
-                            document.getElementById('pickup').value = results[0].formatted_address;
-                        }
-                    });
-                }, error => {
-                    alert('Unable to retrieve location. Please enter manually.');
-                });
-            } else {
-                alert("Geolocation not supported by this browser.");
-            }
-        }
-
-        // Pool Creation
-        function createPool() {
-            const pickup = document.getElementById('pickup').value;
-            const drop = document.getElementById('drop').value;
-            const time = document.getElementById('pickupTime').value;
-            const cost = parseFloat(document.getElementById('cost').value);
-
-            if (!pickup || !drop || !time || !cost) {
-                alert('Please fill all fields');
-                return;
-            }
-
-            // Store data in a pool object (or similar)
-            this.poolData = {
-                pickup,
-                drop,
-                time,
-                cost,
-                riders: 1
-            };
-
-            document.getElementById('displayRoute').innerText = `📍 ${pickup} → ${drop}`;
-            document.getElementById('displayTime').innerText = `🕘 ${time} | 👥 ${this.poolData.riders}/4 riders`;
-            document.getElementById('displayCost').innerText = `₹${cost}/person`;
-
-            formSection.style.display = 'none';
-            poolDashboard.style.display = 'block';
-            createdPool.style.display = 'block';
-        }
-
-        // Show Join Form
-        function showJoinForm() {
-            joinForm.style.display = 'block';
-            overlay.style.display = 'block';
-        }
-
-        // Show Passenger Details
-        function showPassengerDetails() {
-            passengerList.innerHTML = ''; // Clear previous details
-
-            // Add the creator of the pool to passenger details
-            const creatorDiv = document.createElement('div');
-            creatorDiv.innerHTML = `<strong>Host:</strong> ${this.poolData.name} <br> <strong>Phone:</strong> ${this.poolData.phone}`;
-            passengerList.appendChild(creatorDiv);
-
-            // Iterate through the joinedPassengers array and display their details.
-
-            if (this.joinedPassengers && Array.isArray(this.joinedPassengers)) {
-                for (let i = 0; i < this.joinedPassengers.length; i++) {
-                    const passenger = this.joinedPassengers[i];
-                    const passengerDiv = document.createElement('div');
-                    passengerDiv.innerHTML = `<strong>Name:</strong> ${passenger.name} <br> <strong>Phone:</strong> ${passenger.phone}`;
-                    passengerList.appendChild(passengerDiv);
-                }
-            }
-
-            passengerDetails.style.display = 'block';
-            overlay.style.display = 'block';
-        }
-
-        // Hide Passenger Details
-        function hidePassengerDetails() {
-            passengerDetails.style.display = 'none';
-            overlay.style.display = 'none';
-        }
-
-        // Pool Joining
-        function joinPool() {
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-
-            if (!name || !phone) {
-                alert('Please enter your name and phone number.');
-                return;
-            }
-
-            if (this.poolData.riders < 4) {
-                this.poolData.riders++;
-                const splitCost = this.poolData.cost / this.poolData.riders;
-
-                // Create a joinedPassengers Array
-                if (!this.joinedPassengers) {
-                    this.joinedPassengers = [];
-                }
-
-                // Add user to that array
-                this.joinedPassengers.push({
-                    name,
-                    phone
-                });
-
-                // Store the person creating the pool
-                this.poolData.name = name;
-                this.poolData.phone = phone;
-
-                // Update the available pool details
-                document.getElementById('displayTime').innerText = `🕘 ${this.poolData.time} | 👥 ${this.poolData.riders}/4 riders`;
-                document.getElementById('displayCost').innerText = `₹${splitCost.toFixed(2)}/person`;
-
-                // Display joined pool details in "Your Rides"
-                document.getElementById('joinedDisplayRoute').innerText = `📍 ${this.poolData.pickup} → ${this.poolData.drop}`;
-                document.getElementById('joinedDisplayTime').innerText = `🕘 ${this.poolData.time} | 👥 ${this.poolData.riders}/4 riders`;
-                document.getElementById('joinedDisplayCost').innerText = `₹${splitCost.toFixed(2)}/person`;
-
-                yourRides.style.display = 'block'; // Show "Your Rides" section
-
-                // Hide the join form and overlay
-                joinForm.style.display = 'none';
-                overlay.style.display = 'none';
-            } else {
-                alert('Pool is full!');
-            }
-        }
+      // Apply the saved theme before first paint to avoid a flash.
+      try {
+        const theme = localStorage.getItem('rideshare:theme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+      } catch {
+        /* storage unavailable: fall back to the system theme */
+      }
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places" async defer></script>
-</body>
+    <script type="module" src="/src/main.js"></script>
+  </head>
 
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true">
+      <symbol id="i-car" viewBox="0 0 24 24">
+        <path
+          d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"
+        />
+        <circle cx="7" cy="17" r="2" />
+        <path d="M9 17h6" />
+        <circle cx="17" cy="17" r="2" />
+      </symbol>
+      <symbol id="i-crosshair" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8" />
+        <circle cx="12" cy="12" r="2" />
+        <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+      </symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24">
+        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+        <circle cx="12" cy="10" r="3" />
+      </symbol>
+      <symbol id="i-flag" viewBox="0 0 24 24">
+        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+        <path d="M4 22v-7" />
+      </symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 6v6l4 2" />
+      </symbol>
+      <symbol id="i-users" viewBox="0 0 24 24">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+      </symbol>
+      <symbol id="i-user" viewBox="0 0 24 24">
+        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14" /></symbol>
+      <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" /></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" /></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 8v4M12 16h.01" />
+      </symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" />
+        <path
+          d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+        />
+      </symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24">
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+      </symbol>
+      <symbol id="i-phone" viewBox="0 0 24 24">
+        <path
+          d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+        />
+      </symbol>
+      <symbol id="i-loader" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.22-8.56" /></symbol>
+      <symbol id="i-sparkles" viewBox="0 0 24 24">
+        <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" />
+        <path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z" />
+      </symbol>
+    </svg>
+
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="/" aria-label="RideShare home">
+          <span class="brand-mark"
+            ><svg class="icon" aria-hidden="true"><use href="#i-car" /></svg
+          ></span>
+          <span class="brand-name">RideShare</span>
+        </a>
+        <button
+          type="button"
+          class="btn btn-icon btn-ghost"
+          id="themeToggle"
+          aria-label="Switch to dark theme"
+        >
+          <svg class="icon" aria-hidden="true"><use href="#i-moon" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="main" class="container layout" tabindex="-1">
+      <section class="card offer" aria-labelledby="offerTitle">
+        <h1 id="offerTitle" class="offer-title">Offer a ride</h1>
+        <p class="lede">
+          Share your trip and split the fare. Riders who join lower the cost for everyone.
+        </p>
+
+        <form id="poolForm" class="form" novalidate>
+          <div class="field">
+            <label for="pickup">Pickup location</label>
+            <div class="input-with-action">
+              <input
+                id="pickup"
+                name="pickup"
+                type="text"
+                autocomplete="street-address"
+                placeholder="e.g. Koramangala 5th Block"
+                maxlength="120"
+                required
+                aria-describedby="pickup-error"
+              />
+              <button
+                type="button"
+                class="btn btn-icon btn-inline"
+                id="locateBtn"
+                aria-label="Use my current location"
+              >
+                <svg class="icon" aria-hidden="true"><use href="#i-crosshair" /></svg>
+              </button>
+            </div>
+            <p class="field-error" id="pickup-error"></p>
+          </div>
+
+          <div class="field">
+            <label for="drop">Drop location</label>
+            <input
+              id="drop"
+              name="drop"
+              type="text"
+              placeholder="e.g. Electronic City Phase 1"
+              maxlength="120"
+              required
+              aria-describedby="drop-error"
+            />
+            <p class="field-error" id="drop-error"></p>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="time">Departure time</label>
+              <input id="time" name="time" type="time" required aria-describedby="time-error" />
+              <p class="field-error" id="time-error"></p>
+            </div>
+            <div class="field">
+              <label for="fare">Total trip fare (₹)</label>
+              <input
+                id="fare"
+                name="fare"
+                type="number"
+                inputmode="decimal"
+                min="1"
+                max="100000"
+                step="any"
+                placeholder="600"
+                required
+                aria-describedby="fare-hint fare-error"
+              />
+              <p class="field-hint" id="fare-hint">Split equally across every seat taken.</p>
+              <p class="field-error" id="fare-error"></p>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="label" id="partySizeLabel">Seats for your party</span>
+            <div class="stepper" role="group" aria-labelledby="partySizeLabel">
+              <button
+                type="button"
+                class="btn btn-icon btn-secondary"
+                data-step="-1"
+                aria-label="Fewer seats"
+              >
+                <svg class="icon" aria-hidden="true"><use href="#i-minus" /></svg>
+              </button>
+              <output id="partySizeValue" class="stepper-value" aria-live="polite">1</output>
+              <button
+                type="button"
+                class="btn btn-icon btn-secondary"
+                data-step="1"
+                aria-label="More seats"
+              >
+                <svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg>
+              </button>
+              <input type="hidden" name="partySize" id="partySize" value="1" />
+            </div>
+            <p class="field-hint" id="partySizeHint">
+              Including you. Up to 3, so at least one seat is left to share.
+            </p>
+            <p class="field-error" id="partySize-error"></p>
+          </div>
+
+          <fieldset class="fieldset">
+            <legend>Your contact details</legend>
+            <div class="field-row">
+              <div class="field">
+                <label for="name">Name</label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autocomplete="name"
+                  maxlength="50"
+                  required
+                  aria-describedby="name-error"
+                />
+                <p class="field-error" id="name-error"></p>
+              </div>
+              <div class="field">
+                <label for="phone">Phone</label>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  autocomplete="tel"
+                  inputmode="tel"
+                  placeholder="+91 98765 43210"
+                  required
+                  aria-describedby="phone-error"
+                />
+                <p class="field-error" id="phone-error"></p>
+              </div>
+            </div>
+            <p class="field-hint">Shown only to riders who join your pool.</p>
+          </fieldset>
+
+          <p class="fare-preview" id="farePreview" aria-live="polite" hidden></p>
+
+          <button type="submit" class="btn btn-primary btn-block">
+            <svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg>
+            Create pool
+          </button>
+        </form>
+      </section>
+
+      <section class="pools" aria-label="Pools">
+        <div class="tabs" role="tablist" aria-label="Pool lists">
+          <button
+            type="button"
+            class="tab"
+            role="tab"
+            id="tab-available"
+            aria-controls="panel-available"
+            aria-selected="true"
+          >
+            Available <span class="badge" id="availableCount">0</span>
+          </button>
+          <button
+            type="button"
+            class="tab"
+            role="tab"
+            id="tab-mine"
+            aria-controls="panel-mine"
+            aria-selected="false"
+            tabindex="-1"
+          >
+            Your rides <span class="badge" id="mineCount">0</span>
+          </button>
+        </div>
+
+        <div
+          class="tab-panel"
+          role="tabpanel"
+          id="panel-available"
+          aria-labelledby="tab-available"
+          tabindex="0"
+        >
+          <ul class="pool-list" id="availableList" aria-label="Available pools"></ul>
+        </div>
+        <div
+          class="tab-panel"
+          role="tabpanel"
+          id="panel-mine"
+          aria-labelledby="tab-mine"
+          tabindex="0"
+          hidden
+        >
+          <ul class="pool-list" id="mineList" aria-label="Your rides"></ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>Pools are stored only in this browser. Nothing is sent to a server.</p>
+      </div>
+    </footer>
+
+    <dialog id="joinDialog" class="dialog" aria-labelledby="joinTitle">
+      <form id="joinForm" class="form" method="dialog" novalidate>
+        <header class="dialog-header">
+          <h2 id="joinTitle">Join pool</h2>
+          <button type="button" class="btn btn-icon btn-ghost" data-close aria-label="Close">
+            <svg class="icon" aria-hidden="true"><use href="#i-x" /></svg>
+          </button>
+        </header>
+        <p class="dialog-route" id="joinRoute"></p>
+        <div class="field">
+          <label for="joinName">Name</label>
+          <input
+            id="joinName"
+            name="name"
+            type="text"
+            autocomplete="name"
+            maxlength="50"
+            required
+            aria-describedby="joinName-error"
+          />
+          <p class="field-error" id="joinName-error"></p>
+        </div>
+        <div class="field">
+          <label for="joinPhone">Phone</label>
+          <input
+            id="joinPhone"
+            name="phone"
+            type="tel"
+            autocomplete="tel"
+            inputmode="tel"
+            placeholder="+91 98765 43210"
+            required
+            aria-describedby="joinPhone-error"
+          />
+          <p class="field-error" id="joinPhone-error"></p>
+        </div>
+        <div class="field">
+          <label for="joinSeats">Seats</label>
+          <select id="joinSeats" name="seats" aria-describedby="joinSeats-error"></select>
+          <p class="field-error" id="joinSeats-error"></p>
+        </div>
+        <p class="fare-preview" id="joinPreview" aria-live="polite"></p>
+        <div class="dialog-actions">
+          <button type="button" class="btn btn-secondary" data-close>Cancel</button>
+          <button type="submit" class="btn btn-primary">Join pool</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="detailsDialog" class="dialog" aria-labelledby="detailsTitle">
+      <header class="dialog-header">
+        <h2 id="detailsTitle">Ride details</h2>
+        <button type="button" class="btn btn-icon btn-ghost" data-close aria-label="Close">
+          <svg class="icon" aria-hidden="true"><use href="#i-x" /></svg>
+        </button>
+      </header>
+      <div id="detailsBody"></div>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-secondary" data-close>Close</button>
+      </div>
+    </dialog>
+
+    <dialog
+      id="confirmDialog"
+      class="dialog dialog-sm"
+      aria-labelledby="confirmTitle"
+      aria-describedby="confirmMessage"
+    >
+      <form method="dialog">
+        <h2 id="confirmTitle" class="confirm-title"></h2>
+        <p id="confirmMessage" class="confirm-message"></p>
+        <div class="dialog-actions">
+          <button type="submit" class="btn btn-secondary" value="cancel">Keep it</button>
+          <button type="submit" class="btn btn-danger" value="confirm" id="confirmOk"></button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="toaster" id="toaster" role="status" aria-live="polite"></div>
+  </body>
 </html>
