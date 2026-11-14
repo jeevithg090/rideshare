@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carpool Pooling System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Base Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            color: #2c3e50;
+        }
+
+        .main-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Counter Section */
+        .counter-section {
+            background: white;
+            padding: 40px 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .counter-header {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            color: #34495e;
+        }
+
+        .counter-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .counter-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 15px;
+            background: #4fc3f7;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .counter-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(79, 195, 247, 0.4);
+        }
+
+        .counter-value {
+            font-size: 2.5em;
+            min-width: 60px;
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .go-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        /* Form Section */
+        .form-section {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .gps-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #4fc3f7;
+            cursor: pointer;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 45px 15px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .time-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .time-input input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+        }
+
+        /* Pool Dashboard */
+        .pool-dashboard {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .pool-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .pool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .pool-price {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .pool-details {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .join-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        #createdPool,
+        #yourRides,
+        #joinForm,
+        #passengerDetails,
+        #overlay {
+            display: none;
+        }
+
+        #joinForm {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        #joinForm .form-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #joinForm .go-btn {
+            width: 100%;
+            padding: 10px;
+        }
+
+        #passengerDetails {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            width: 80%;
+            max-width: 400px;
+        }
+
+        #passengerList {
+            margin-bottom: 15px;
+        }
+
+        #passengerList div {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        #passengerList div:last-child {
+            border-bottom: none;
+        }
+
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        <!-- Counter Section -->
+        <div class="counter-section">
+            <h2 class="counter-header">Number of Pool Riders</h2>
+            <div class="counter-wrapper">
+                <button class="counter-btn" id="decrementBtn">-</button>
+                <div class="counter-value" id="riderCount">1</div>
+                <button class="counter-btn" id="incrementBtn">+</button>
+            </div>
+            <button class="go-btn" id="goBtn">Continue →</button>
+        </div>
+
+        <!-- Form Section -->
+        <div class="form-section" id="formSection">
+            <div class="input-group">
+                <input type="text" class="form-input" id="pickup" placeholder="Pickup location" required>
+                <button class="gps-btn" onclick="getCurrentLocation()">
+                    <i class="fas fa-crosshairs"></i>
+                </button>
+            </div>
+
+            <div class="input-group">
+                <input type="text" class="form-input" id="drop" placeholder="Drop location" required>
+            </div>
+
+            <div class="input-group">
+                <input type="number" class="form-input" id="cost" placeholder="Cost per rider (₹)" required step="10">
+            </div>
+
+            <div class="time-input">
+                <input type="time" class="form-input" id="pickupTime" required>
+            </div>
+
+            <button class="go-btn" onclick="createPool()">Find Pool</button>
+        </div>
+
+        <!-- Pool Dashboard -->
+        <div class="pool-dashboard" id="poolDashboard">
+            <div class="pool-card" id="createdPool">
+                <div class="pool-header">
+                    <h3>Available Pool</h3>
+                    <div class="pool-price" id="displayCost">₹150/person</div>
+                </div>
+                <div class="pool-details">
+                    <div id="displayRoute">🏢 Office Complex → 🏡 Residential Area</div>
+                    <div id="displayTime">🕘 08:30 AM | 👥 2/4 riders</div>
+                </div>
+                <button class="join-btn" onclick="showJoinForm()">Join Pool</button>
+            </div>
+        </div>
+
+        <!-- Your Rides Section -->
+        <div class="pool-dashboard" id="yourRides">
+            <h2>Your Rides</h2>
+            <div class="pool-card" id="joinedPool">
+                <div class="pool-header">
+                    <h3>Joined Pool</h3>
+                    <div class="pool-price" id="joinedDisplayCost">₹150/person</div>
+                </div>
+                <div class="pool-details">
+                    <div id="joinedDisplayRoute">🏢 Office Complex → 🏡 Residential Area</div>
+                    <div id="joinedDisplayTime">🕘 08:30 AM | 👥 2/4 riders</div>
+                </div>
+                <button class="go-btn" onclick="showPassengerDetails()">Show Details</button>
+            </div>
+        </div>
+
+        <!-- Join Form Popup -->
+        <div id="joinForm">
+            <h2>Join Pool</h2>
+            <input type="text" id="name" class="form-input" placeholder="Your Name" required>
+            <input type="tel" id="phone" class="form-input" placeholder="Phone Number" required>
+            <button class="go-btn" onclick="joinPool()">Join</button>
+        </div>
+
+        <!-- Passenger Details Popup -->
+        <div id="passengerDetails">
+            <h2>Passenger Details</h2>
+            <div id="passengerList">
+                <!-- Passenger details will be added here dynamically -->
+            </div>
+            <button class="go-btn" onclick="hidePassengerDetails()">Close</button>
+        </div>
+
+        <!-- Overlay -->
+        <div id="overlay"></div>
+    </div>
+
+    <script>
+        // Counter Logic
+        let riderCount = 1;
+        const counter = document.getElementById('riderCount');
+        const incrementBtn = document.getElementById('incrementBtn');
+        const decrementBtn = document.getElementById('decrementBtn');
+        const goBtn = document.getElementById('goBtn');
+        const formSection = document.getElementById('formSection');
+        const poolDashboard = document.getElementById('poolDashboard');
+        const createdPool = document.getElementById('createdPool');
+        const yourRides = document.getElementById('yourRides');
+        const joinedPool = document.getElementById('joinedPool');
+        const joinForm = document.getElementById('joinForm');
+        const overlay = document.getElementById('overlay');
+        const passengerDetails = document.getElementById('passengerDetails');
+        const passengerList = document.getElementById('passengerList');
+
+        incrementBtn.addEventListener('click', () => {
+            riderCount = Math.min(riderCount + 1, 4);
+            counter.textContent = riderCount;
+        });
+
+        decrementBtn.addEventListener('click', () => {
+            riderCount = Math.max(riderCount - 1, 1);
+            counter.textContent = riderCount;
+        });
+
+        goBtn.addEventListener('click', () => {
+            document.querySelector('.counter-section').style.display = 'none';
+            formSection.style.display = 'block';
+        });
+
+        // GPS Integration
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const geocoder = new google.maps.Geocoder();
+                    const latlng = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    geocoder.geocode({
+                        location: latlng
+                    }, (results, status) => {
+                        if (status === "OK" && results[0]) {
+                            document.getElementById('pickup').value = results[0].formatted_address;
+                        }
+                    });
+                }, error => {
+                    alert('Unable to retrieve location. Please enter manually.');
+                });
+            } else {
+                alert("Geolocation not supported by this browser.");
+            }
+        }
+
+        // Pool Creation
+        function createPool() {
+            const pickup = document.getElementById('pickup').value;
+            const drop = document.getElementById('drop').value;
+            const time = document.getElementById('pickupTime').value;
+            const cost = parseFloat(document.getElementById('cost').value);
+
+            if (!pickup || !drop || !time || !cost) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            // Store data in a pool object (or similar)
+            this.poolData = {
+                pickup,
+                drop,
+                time,
+                cost,
+                riders: 1
+            };
+
+            document.getElementById('displayRoute').innerText = `📍 ${pickup} → ${drop}`;
+            document.getElementById('displayTime').innerText = `🕘 ${time} | 👥 ${this.poolData.riders}/4 riders`;
+            document.getElementById('displayCost').innerText = `₹${cost}/person`;
+
+            formSection.style.display = 'none';
+            poolDashboard.style.display = 'block';
+            createdPool.style.display = 'block';
+        }
+
+        // Show Join Form
+        function showJoinForm() {
+            joinForm.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        // Show Passenger Details
+        function showPassengerDetails() {
+            passengerList.innerHTML = ''; // Clear previous details
+
+            // Add the creator of the pool to passenger details
+            const creatorDiv = document.createElement('div');
+            creatorDiv.innerHTML = `<strong>Host:</strong> ${this.poolData.name} <br> <strong>Phone:</strong> ${this.poolData.phone}`;
+            passengerList.appendChild(creatorDiv);
+
+            // Iterate through the joinedPassengers array and display their details.
+
+            if (this.joinedPassengers && Array.isArray(this.joinedPassengers)) {
+                for (let i = 0; i < this.joinedPassengers.length; i++) {
+                    const passenger = this.joinedPassengers[i];
+                    const passengerDiv = document.createElement('div');
+                    passengerDiv.innerHTML = `<strong>Name:</strong> ${passenger.name} <br> <strong>Phone:</strong> ${passenger.phone}`;
+                    passengerList.appendChild(passengerDiv);
+                }
+            }
+
+            passengerDetails.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        // Hide Passenger Details
+        function hidePassengerDetails() {
+            passengerDetails.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        // Pool Joining
+        function joinPool() {
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+
+            if (!name || !phone) {
+                alert('Please enter your name and phone number.');
+                return;
+            }
+
+            if (this.poolData.riders < 4) {
+                this.poolData.riders++;
+                const splitCost = this.poolData.cost / this.poolData.riders;
+
+                // Create a joinedPassengers Array
+                if (!this.joinedPassengers) {
+                    this.joinedPassengers = [];
+                }
+
+                // Add user to that array
+                this.joinedPassengers.push({
+                    name,
+                    phone
+                });
+
+                // Store the person creating the pool
+                this.poolData.name = name;
+                this.poolData.phone = phone;
+
+                // Update the available pool details
+                document.getElementById('displayTime').innerText = `🕘 ${this.poolData.time} | 👥 ${this.poolData.riders}/4 riders`;
+                document.getElementById('displayCost').innerText = `₹${splitCost.toFixed(2)}/person`;
+
+                // Display joined pool details in "Your Rides"
+                document.getElementById('joinedDisplayRoute').innerText = `📍 ${this.poolData.pickup} → ${this.poolData.drop}`;
+                document.getElementById('joinedDisplayTime').innerText = `🕘 ${this.poolData.time} | 👥 ${this.poolData.riders}/4 riders`;
+                document.getElementById('joinedDisplayCost').innerText = `₹${splitCost.toFixed(2)}/person`;
+
+                yourRides.style.display = 'block'; // Show "Your Rides" section
+
+                // Hide the join form and overlay
+                joinForm.style.display = 'none';
+                overlay.style.display = 'none';
+            } else {
+                alert('Pool is full!');
+            }
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places" async defer></script>
+</body>
+
+</html>
